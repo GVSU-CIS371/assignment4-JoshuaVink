@@ -4,7 +4,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { currentSyrup, syrups } from "../stores/beverage";
+import { storeToRefs } from "pinia";
+import { useBeverageStore } from "../stores/beverageStore";
+
+const beverageStore = useBeverageStore();
+const { currentSyrup, syrups } = storeToRefs(beverageStore);
 
 const selectedSyrup = computed(
   () => syrups.value.find((syrup) => syrup.id === currentSyrup.value) ?? syrups.value[0],

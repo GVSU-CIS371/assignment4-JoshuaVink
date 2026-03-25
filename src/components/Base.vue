@@ -4,7 +4,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { bases, currentBase } from "../stores/beverage";
+import { storeToRefs } from "pinia";
+import { useBeverageStore } from "../stores/beverageStore";
+
+const beverageStore = useBeverageStore();
+const { bases, currentBase } = storeToRefs(beverageStore);
 
 const selectedBase = computed(
   () => bases.value.find((base) => base.id === currentBase.value) ?? bases.value[0],

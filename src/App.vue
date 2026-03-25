@@ -1,6 +1,26 @@
-<template>
+﻿<template>
   <div>
     <Beverage :isIced="currentTemp === 'Cold'" />
+
+    <label for="beverage-name">Name</label>
+    <input id="beverage-name" type="text" v-model="currentName" />
+    <button type="button" @click="makeAndSelectBeverage">Make Beverage</button>
+
+    <div id="beverage-container">
+      <template v-for="beverage in beverages" :key="beverage.id">
+        <label>
+          <input
+            type="radio"
+            name="saved-beverage"
+            :value="beverage.id"
+            v-model="selectedBeverageId"
+            @change="selectBeverage(beverage.id)"
+          />
+          {{ beverage.name }}
+        </label>
+      </template>
+    </div>
+
     <ul>
       <li>
         <template v-for="temp in temps" :key="temp">
@@ -63,8 +83,14 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import Beverage from "./components/Beverage.vue";
-import {
+import { useBeverageStore } from "./stores/beverageStore";
+
+const beverageStore = useBeverageStore();
+
+const {
   temps,
   bases,
   creamers,
@@ -73,7 +99,30 @@ import {
   currentBase,
   currentCreamer,
   currentSyrup,
-} from "./stores/beverage";
+  currentName,
+  beverages,
+} = storeToRefs(beverageStore);
+
+const { makeBeverage, showBeverage } = beverageStore;
+
+const selectedBeverageId = ref("");
+
+const makeAndSelectBeverage = () => {
+  const initialCount = beverages.value.length;
+  makeBeverage();
+
+  if (beverages.value.length <= initialCount) {
+    return;
+  }
+
+  const newestBeverage = beverages.value[beverages.value.length - 1];
+  selectedBeverageId.value = newestBeverage.id;
+};
+
+const selectBeverage = (beverageId: string) => {
+  selectedBeverageId.value = beverageId;
+  showBeverage(beverageId);
+};
 </script>
 
 <style lang="scss">
@@ -98,3 +147,4 @@ label {
   margin-right: 0.75rem;
 }
 </style>
+

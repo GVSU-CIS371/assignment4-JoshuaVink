@@ -10,7 +10,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { creamers, currentCreamer } from "../stores/beverage";
+import { storeToRefs } from "pinia";
+import { useBeverageStore } from "../stores/beverageStore";
+
+const beverageStore = useBeverageStore();
+const { creamers, currentCreamer } = storeToRefs(beverageStore);
 
 const selectedCreamer = computed(
   () =>
